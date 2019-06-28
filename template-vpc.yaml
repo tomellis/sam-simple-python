@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sam-simple-python-vpc
+
+  Sample SAM Template for sam-simple-python-vpc
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  HelloWorldApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      EndpointConfiguration: REGIONAL
+      TracingEnabled: True
+      # MethodSettings supported since: https://github.com/awslabs/serverless-application-model/releases/tag/1.4.0
+      # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-apitgateway-stage-methodsetting.html
+      MethodSettings:
+        - HttpMethod: "*"         # All methods
+          ResourcePath: "/*"      # All paths
+          LoggingLevel: INFO      # INFO or ERROR
+          DataTraceEnabled: true  # Put logs into cloudwatch
+          MetricsEnabled: true    # Enable detailed metrics (error 404, latence, ...)
+
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: hello_world/
+      Handler: app.lambda_handler
+      Runtime: python3.6
+      Tracing: Active # X-Ray Tracing at the Function/Lambda level
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-0122e6728e0e8d3b8
+        SubnetIds:
+          - subnet-06778a9dd8286f1f8
+          - subnet-00279654f26ef5940
+          - subnet-00279654f26ef5940
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            RestApiId: !Ref HelloWorldApi
+            Path: /hello
+            Method: get
+
+Outputs:
+  HelloWorldApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${HelloWorldApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+  HelloWorldFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt HelloWorldFunction.Arn
+  HelloWorldFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt HelloWorldFunctionRole.Arn
