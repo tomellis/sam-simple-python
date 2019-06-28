@@ -17,6 +17,8 @@ Resources:
       StageName: Prod
       EndpointConfiguration: REGIONAL
       TracingEnabled: True
+      # MethodSettings supported since: https://github.com/awslabs/serverless-application-model/releases/tag/1.4.0
+      # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-apitgateway-stage-methodsetting.html
       MethodSettings:
         - HttpMethod: "*"         # All methods
           ResourcePath: "/*"      # All paths
@@ -30,7 +32,7 @@ Resources:
       CodeUri: hello_world/
       Handler: app.lambda_handler
       Runtime: python3.6
-      Tracing: Active
+      Tracing: Active # X-Ray Tracing at the Function/Lambda level
       Events:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
