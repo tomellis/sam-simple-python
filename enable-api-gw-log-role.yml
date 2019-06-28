@@ -1,0 +1,23 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: Configure API GW at account level to allow it to log
+
+Resources: 
+  ApiGwLoggingRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service: apigateway.amazonaws.com
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonApiGatewayPushToCloudWatchLogs
+
+  # Allow api gateway to create cloudwatch logs
+  ApiGwAccount:
+    Type: AWS::ApiGateway::Account
+    Properties: 
+      CloudWatchRoleArn: !GetAtt ApiGwLoggingRole.Arn
