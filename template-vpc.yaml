@@ -31,6 +31,11 @@ Resources:
     Properties:
       CodeUri: hello_world/
       Handler: app.lambda_handler
+      # Experimenting with VPC Lambda Cold starts - https://docs.aws.amazon.com/lambda/latest/dg/vpc.html#vpc-setup-guidelines
+      # MemorySize 3GB == 1 ENI per 1 Concurrent invocation
+      # MemorySize 1.5GB == 1 ENI per 2 Concurrent invocation
+      # MemorySize 128MB == 1 ENI per 24 Concurrent invocation
+      MemorySize: 512
       Runtime: python3.6
       Tracing: Active # X-Ray Tracing at the Function/Lambda level
       VpcConfig:
