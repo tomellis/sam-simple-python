@@ -192,6 +192,12 @@ sam package \
     --output-template-file packaged.yaml \
     --s3-bucket REPLACE_THIS_WITH_YOUR_S3_BUCKET_NAME
 
+# If the account is new, enable API Gateway logging at the account level
+aws cloudformation deploy \
+    --template-file enable-api-gw-log-role.yml \
+    --stack-name enable-api-gw-logs-account \
+    --capabilities CAPABILITY_IAM
+
 # Deploy SAM template as a CloudFormation stack
 sam deploy \
     --template-file packaged.yaml \
