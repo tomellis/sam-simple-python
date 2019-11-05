@@ -38,6 +38,8 @@ Resources:
       MemorySize: 512
       Runtime: python3.6
       Tracing: Active # X-Ray Tracing at the Function/Lambda level
+      Policies:
+        - AWSLambdaVPCAccessExecutionRole # Managed Policy
       VpcConfig:
         SecurityGroupIds:
           - sg-0122e6728e0e8d3b8
